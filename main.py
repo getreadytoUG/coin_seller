@@ -136,6 +136,7 @@ if __name__ == "__main__":
         
         # try:
             for subject in subject_list:
+                # 보유
                 if status[subject]:
                     position = positions.get(subject)
                     if not position:

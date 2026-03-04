@@ -1,6 +1,10 @@
 import jwt
 import uuid
 import requests
+from urllib.parse import unquote, urlencode
+import hashlib
+
+UPBIT_ORDER_URL = "https://api.upbit.com/v1/orders"
 
 def decide_sell(current_price, position):
     """
@@ -40,31 +44,39 @@ def decide_sell(current_price, position):
     return False
 
 
-def place_market_sell(access_key, secret_key, subject, volume):
-    url = "https://api.upbit.com/v1/orders"
-
-    query = {
-        "market": subject,      # 예: KRW-BTC
-        "side": "ask",           # 매도
-        "volume": str(volume),   # 매도 수량
-        "ord_type": "market",    # 시장가
+def place_market_sell(access_key, secret_key, market, volume):
+    params = {
+        "market": market,
+        "side": "ask",
+        "ord_type": "market",
+        "volume": volume
     }
+    query_string = unquote(urlencode(params, doseq=True)).encode("utf-8")
+    
+    m = hashlib.sha512()
+    m.update(query_string)
+    query_hash = m.hexdigest()
 
     payload = {
         "access_key": access_key,
         "nonce": str(uuid.uuid4()),
+        "query_hash": query_hash,
+        "query_hash_alg": "SHA512"
     }
 
-    token = jwt.encode(payload, secret_key, algorithm="HS256")
+    jwt_token = jwt.encode(payload, secret_key, algorithm="HS256")
     headers = {
-        "Authorization": f"Bearer {token}",
-        "Content-Type": "application/json",
+        "Authorization": f"Bearer {jwt_token}",
+        "Accept": "application/json"
     }
 
-    res = requests.post(url, json=query, headers=headers)
+    response = requests.post(UPBIT_ORDER_URL, headers=headers, json=params)
 
-    if res.status_code != 201:
-        print("[SELL ERROR]", res.text)
+    if response.status_code != 201:
+        print(f"[SELL FAIL] {market}")
+        print(response.status_code, response.text)
         return None
 
-    return res.json()
+    result = response.json()
+    print(f"[SELL SUCCESS] {market} | UUID: {result['uuid']}")
+    return result

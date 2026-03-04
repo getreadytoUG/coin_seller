@@ -1,9 +1,11 @@
 import requests
 import jwt
 import uuid
+from urllib.parse import unquote, urlencode
+import hashlib
+
 
 UPBIT_ORDER_URL = "https://api.upbit.com/v1/orders"
-
 
 def place_market_buy(access_key, secret_key, market, price):
     """
@@ -11,24 +13,32 @@ def place_market_buy(access_key, secret_key, market, price):
     price: 사용 금액 (KRW or USDT)
     """
 
+    params = {
+        "market": market,
+        "side": "bid",
+        "ord_type": "price",
+        "price": price,
+    }
+    query_string = unquote(urlencode(params, doseq=True)).encode("utf-8")
+    
+    m = hashlib.sha512()
+    m.update(query_string)
+    query_hash = m.hexdigest()
+
     payload = {
         "access_key": access_key,
         "nonce": str(uuid.uuid4()),
+        "query_hash": query_hash,
+        "query_hash_alg": "SHA512"
     }
 
     jwt_token = jwt.encode(payload, secret_key, algorithm="HS256")
     headers = {
-        "Authorization": f"Bearer {jwt_token}"
+        "Authorization": f"Bearer {jwt_token}",
+        "Accept": "application/json"
     }
 
-    data = {
-        "market": market,
-        "side": "bid",
-        "ord_type": "price",   # 시장가 매수
-        "price": str(round(price, 2))  # 소수점 방어
-    }
-
-    response = requests.post(UPBIT_ORDER_URL, headers=headers, json=data)
+    response = requests.post(UPBIT_ORDER_URL, headers=headers, json=params)
 
     if response.status_code != 201:
         print(f"[BUY FAIL] {market}")
