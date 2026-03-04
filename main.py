@@ -127,11 +127,14 @@ if __name__ == "__main__":
     ]
     
     while True:  
-        try:  
+        # try:  
             status, balances = check_subjects(access_key, secret_key, subject_list)
 
             positions = init_positions_from_balances(balances, subject_list)
-
+        # except Exception as e:
+        #     print(f"[ERROR CODE 1] {e}")
+        
+        # try:
             for subject in subject_list:
                 if status[subject]:
                     position = positions.get(subject)
@@ -188,6 +191,6 @@ if __name__ == "__main__":
                                     status[subject] = True
                                 
             time.sleep(5)
-        except Exception as e:
-            print(e)
-            time.sleep(5)
+        # except Exception as e:
+        #     print(e)
+        #     time.sleep(5)
