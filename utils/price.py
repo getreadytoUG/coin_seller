@@ -13,3 +13,6 @@ def get_current_price(subject):
     current_price = json.loads(response.text)[0]["trade_price"]
     
     return current_price
+
+if __name__ == "__main__":
+    print(get_current_price("KRW-BARD"))

@@ -122,13 +122,14 @@ if __name__ == "__main__":
         "KRW-BTC",
         "KRW-ETH",
         "KRW-XRP",
-        "KRW-BARD",
         "KRW-SOL",
+        "KRW-ORCA"
+        # "KRW-BARD",
         # "KRW-DOGE",
     ]
     
     while True:  
-        try:  
+        # try:  
             status, balances = check_subjects(access_key, secret_key, subject_list)
 
             positions = init_positions_from_balances(balances, subject_list)
@@ -195,6 +196,6 @@ if __name__ == "__main__":
                                     status[subject] = True
                                 
             time.sleep(5)
-        except Exception as e:
-            print(e)
-            time.sleep(5)
+        # except Exception as e:
+        #     print(e)
+        #     time.sleep(5)
