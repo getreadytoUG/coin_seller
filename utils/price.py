@@ -10,7 +10,11 @@ def get_current_price(subject):
 
     response = requests.get(url, headers=headers, params=params)
     
-    current_price = json.loads(response.text)[0]["trade_price"]
+    try:
+        current_price = json.loads(response.text)[0]["trade_price"]
+    except Exception as e:
+        print(e)
+        print(current_price)
     
     return current_price
 
