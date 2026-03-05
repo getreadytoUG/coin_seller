@@ -122,8 +122,9 @@ if __name__ == "__main__":
         "KRW-BTC",
         "KRW-ETH",
         "KRW-XRP",
-        "KRW-ORCA",
+        "KRW-BARD",
         "KRW-SOL",
+        # "KRW-DOGE",
     ]
     
     while True:  
