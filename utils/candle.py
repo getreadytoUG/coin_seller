@@ -92,7 +92,7 @@ def ema_diff_can_buy(market):
     ema_diff_1m, ema_20 = calculate_ema_diff(candles_1m)
 
     if ema_diff_1m < 0:
-        print(f"{market} False 1")
+        print(f"{market} False 1 : EMA Difference 1minute")
         return False, ema_20
 
     # 5분봉 계산
@@ -100,17 +100,17 @@ def ema_diff_can_buy(market):
     ema_diff_5m, _ = calculate_ema_diff(candles_5m)
 
     if ema_diff_5m < 0:
-        print(f"{market} False 2")
+        print(f"{market} False 2 : EMA Difference 5minute")
         return False, ema_20
     
     # 1분봉 거래량 계산
     if not is_volume_increasing(candles_1m):
-        print(f"{market} False 3")
+        print(f"{market} False 3 : Not enough amount")
         return False, ema_20
     
     # 고점 근처
     if not check_high_break_or_near(candles_1m):
-        print(f"{market} False 4")
+        print(f"{market} False 4 : Not near the highest")
         return False, ema_20
     
     return True, ema_20
