@@ -13,8 +13,8 @@ def get_current_price(subject):
     try:
         current_price = json.loads(response.text)[0]["trade_price"]
     except Exception as e:
-        print(e)
-        print(response)
+        print(f"ERROR: {e}")
+        print(f"RESPONSE: {response}")
     
     return current_price
 
