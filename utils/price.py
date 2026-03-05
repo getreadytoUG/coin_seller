@@ -14,7 +14,7 @@ def get_current_price(subject):
         current_price = json.loads(response.text)[0]["trade_price"]
     except Exception as e:
         print(e)
-        print(current_price)
+        print(response)
     
     return current_price
 
