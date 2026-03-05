@@ -188,7 +188,8 @@ if __name__ == "__main__":
                                 try:
                                     result = place_market_buy(access_key, secret_key, subject, buy_amount)
                                 except:
-                                    buy_amount -= 10
+                                    buy_amount *= 0.995
+                                    buy_amount = int(buy_amount)
 
                             if result:
                                 avg_price, volume = wait_buy_filled(access_key, secret_key, result["uuid"])
