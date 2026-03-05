@@ -122,7 +122,8 @@ if __name__ == "__main__":
         "KRW-ETH",
         "KRW-XRP",
         "KRW-SOL",
-        "KRW-HOLO"
+        "KRW-COW"
+        # "KRW-HOLO"
         # "KRW-ORCA"
         # "KRW-PLUME"
         # "KRW-BARD",
