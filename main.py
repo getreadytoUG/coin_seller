@@ -73,7 +73,6 @@ def calculate_buy_amount_per_market(
 
     if amount_per_market < min_order_amount:
         return 0.0
-
     return amount_per_market
 
 def wait_buy_filled(access_key, secret_key, order_uuid, timeout=5):
@@ -123,7 +122,8 @@ if __name__ == "__main__":
         "KRW-ETH",
         "KRW-XRP",
         "KRW-SOL",
-        "KRW-ORCA"
+        "KRW-PLUME"
+        # "KRW-ORCA"
         # "KRW-BARD",
         # "KRW-DOGE",
     ]
@@ -178,7 +178,7 @@ if __name__ == "__main__":
                             status_dict=status,
                             quote_currency=quote_currency,
                             min_order_amount=min_order
-                        )
+                        ) - 1
 
                         if buy_amount > 0:
                             print(f"[BUY READY] {subject} → {buy_amount:.2f} {quote_currency}")
