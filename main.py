@@ -122,12 +122,12 @@ if __name__ == "__main__":
         "KRW-BTC",
         "KRW-ETH",
         "KRW-XRP",
-        "KRW-DOGE",
+        "KRW-ORCA",
         "KRW-SOL",
     ]
     
     while True:  
-        # try:  
+        try:  
             status, balances = check_subjects(access_key, secret_key, subject_list)
 
             positions = init_positions_from_balances(balances, subject_list)
@@ -145,6 +145,8 @@ if __name__ == "__main__":
                     current_price = get_current_price(subject)
                     
                     sell_signal = decide_sell(current_price, position)
+                    
+                    print(f"{subject} not ready to sell")
                     
                     if sell_signal:
                         print(f"[SELL READY] {subject}")
@@ -192,6 +194,6 @@ if __name__ == "__main__":
                                     status[subject] = True
                                 
             time.sleep(5)
-        # except Exception as e:
-        #     print(e)
-        #     time.sleep(5)
+        except Exception as e:
+            print(e)
+            time.sleep(5)
