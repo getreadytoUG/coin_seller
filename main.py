@@ -183,7 +183,11 @@ if __name__ == "__main__":
                         if buy_amount > 0:
                             print(f"[BUY READY] {subject} → {buy_amount:.2f} {quote_currency}")
                             # 실제 매수는 여기서
-                            result = place_market_buy(access_key, secret_key, subject, buy_amount)
+                            for i in range(3):
+                                try:
+                                    result = place_market_buy(access_key, secret_key, subject, buy_amount)
+                                except:
+                                    buy_amount -= 10
 
                             if result:
                                 avg_price, volume = wait_buy_filled(access_key, secret_key, result["uuid"])
