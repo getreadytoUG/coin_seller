@@ -178,8 +178,9 @@ if __name__ == "__main__":
                     )
 
                     if buy_amount > 0:
-                        if buy_amount < 5000:
-                            buy_amount = 5000
+                        # 5000원 사자마자 손해나면 5000 원의 3퍼센트에 팔리는데 이때 매도가 안됨 그래서 5%로 올려줌
+                        if buy_amount < 5000 * 1.05:
+                            buy_amount = 5000 * 1.05
                             print(f"{subject} Adjusted buy amount to minimum: {buy_amount} {quote_currency}")
                         else:
                             print(f"[BUY READY] {subject} → {buy_amount:.2f} {quote_currency}")
