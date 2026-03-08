@@ -1,6 +1,8 @@
 """
 첫번째 조건인 ema20_1 > ema60_1 and ema20_5 > ema60_5 조건 보기
 """
+import time
+
 import requests
 import json
 
@@ -42,7 +44,18 @@ def get_candles(unit, market):
 
     headers = {"accept": "application/json"}
 
-    response = requests.get(url, headers=headers, params=params)
+    correct_flag = False
+    for _ in range(3):
+        try:
+            response = requests.get(url, headers=headers, params=params)
+            if response.status_code == 200:
+                correct_flag = True
+                break
+        except:
+            time.sleep(1)
+            
+    if not correct_flag:
+        raise Exception("Failed to fetch candles after 3 attempts.")
 
     candles = json.loads(response.text)
 

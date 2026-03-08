@@ -20,3 +20,6 @@ def decide_buy(subject):
     
 def decide_buy_dummy(subject):
     return True
+
+
+

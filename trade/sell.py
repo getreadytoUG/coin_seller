@@ -1,3 +1,5 @@
+import time
+
 import jwt
 import uuid
 import requests
@@ -69,13 +71,19 @@ def place_market_sell(access_key, secret_key, market, volume):
         "Authorization": f"Bearer {jwt_token}",
         "Accept": "application/json"
     }
+    
+    correct_flag = False
+    for _ in range(3):
+        try:
+            response = requests.post(UPBIT_ORDER_URL, headers=headers, json=params)
+            if response.status_code == 200:
+                correct_flag = True
+                break
+        except:
+            time.sleep(1)
 
-    response = requests.post(UPBIT_ORDER_URL, headers=headers, json=params)
-
-    if response.status_code != 201:
-        print(f"[SELL FAIL] {market}")
-        print(response.status_code, response.text)
-        return None
+    if not correct_flag:
+        raise Exception("Failed to place sell order after 3 attempts.")
 
     result = response.json()
     print(f"[SELL SUCCESS] {market} | UUID: {result['uuid']}")

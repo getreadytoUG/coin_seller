@@ -31,7 +31,21 @@ def get_balances(access_key, secret_key):
     token = jwt.encode(payload, secret_key, algorithm="HS256")
 
     headers = {"Authorization": f"Bearer {token}"}
-    res = requests.get("https://api.upbit.com/v1/accounts", headers=headers)
+    
+    correct_flag = False
+    for _ in range(3):
+        try:
+            res = requests.get("https://api.upbit.com/v1/accounts", headers=headers)
+            if res.status_code == 200:
+                correct_flag = True
+                break
+            break
+        except:
+            time.sleep(1)
+    
+    if not correct_flag:
+        raise Exception("Failed to fetch balances after 3 attempts.")
+            
     return res.json()
 
 
@@ -116,94 +130,74 @@ if __name__ == "__main__":
     
     access_key = os.getenv("ACCESS_KEY")
     secret_key = os.getenv("SECRET_KEY")
-    
-    subject_list = [
-        "KRW-BTC",
-        "KRW-ETH",
-        "KRW-XRP",
-        "KRW-SOL",
-        "KRW-ANKR"
-        # "KRW-COW"
-        # "KRW-HOLO"
-        # "KRW-ORCA"
-        # "KRW-PLUME"
-        # "KRW-BARD",
-        # "KRW-DOGE",
-    ]
+    subject_list = os.getenv("MARKET_LIST").split(", ")
     
     while True:  
-        # try:  
-            status, balances = check_subjects(access_key, secret_key, subject_list)
+        status, balances = check_subjects(access_key, secret_key, subject_list)
 
-            positions = init_positions_from_balances(balances, subject_list)
-        # except Exception as e:
-        #     print(f"[ERROR CODE 1] {e}")
+        positions = init_positions_from_balances(balances, subject_list)
         
-        # try:
-            for subject in subject_list:
-                # 보유
-                if status[subject]:
-                    position = positions.get(subject)
-                    if not position:
-                        continue
+        for subject in subject_list:
+            # 보유
+            if status[subject]:
+                position = positions.get(subject)
+                if not position:
+                    continue
+            
+                current_price = get_current_price(subject)
                 
-                    current_price = get_current_price(subject)
+                sell_signal = decide_sell(current_price, position)
+                
+                print(f"{subject} not ready to sell")
+                
+                if sell_signal:
+                    print(f"[SELL READY] {subject}")
                     
-                    sell_signal = decide_sell(current_price, position)
+                    result = place_market_sell(
+                        access_key,
+                        secret_key,
+                        subject,
+                        position["volume"]
+                    )
                     
-                    print(f"{subject} not ready to sell")
-                    
-                    if sell_signal:
-                        print(f"[SELL READY] {subject}")
-                        
-                        result = place_market_sell(
-                            access_key,
-                            secret_key,
-                            subject,
-                            position["volume"]
-                        )
-                        
-                        if result:
-                            print(f"[SELL DONE] {subject}")
-                            status[subject] = False
-                            positions.pop(subject, None)
-                    
-                else:
-                    # 미보유 → 매수 판단
-                    if decide_buy(subject):
-                    # if decide_buy_dummy(subject):
-                        quote_currency = subject.split("-")[0]
+                    if result:
+                        print(f"[SELL DONE] {subject}")
+                        status[subject] = False
+                        positions.pop(subject, None)
+                
+            else:
+                # 미보유 → 매수 판단
+                if decide_buy(subject):
+                # if decide_buy_dummy(subject):
+                    quote_currency = subject.split("-")[0]
 
-                        min_order = 10 if quote_currency == "USDT" else 5000
-                        
-                        buy_amount = calculate_buy_amount_per_market(
-                            balances=balances,
-                            status_dict=status,
-                            quote_currency=quote_currency,
-                            min_order_amount=min_order
-                        ) - 1
+                    min_order = 10 if quote_currency == "USDT" else 5000
+                    
+                    buy_amount = calculate_buy_amount_per_market(
+                        balances=balances,
+                        status_dict=status,
+                        quote_currency=quote_currency,
+                        min_order_amount=min_order
+                    ) - 1
 
-                        if buy_amount > 0:
-                            print(f"[BUY READY] {subject} → {buy_amount:.2f} {quote_currency}")
-                            result = None
-                            for i in range(3):
-                                result = place_market_buy(access_key, secret_key, subject, buy_amount)
-                                if result:
-                                    break
-                                buy_amount = int(buy_amount * 0.995)
-
+                    if buy_amount > 0:
+                        print(f"[BUY READY] {subject} → {buy_amount:.2f} {quote_currency}")
+                        result = None
+                        for i in range(3):
+                            result = place_market_buy(access_key, secret_key, subject, buy_amount)
                             if result:
-                                avg_price, volume = wait_buy_filled(access_key, secret_key, result["uuid"])
-                                if avg_price:
-                                    positions[subject] = {
-                                        "init_price": avg_price,
-                                        "max_price": avg_price,
-                                        "volume": volume,
-                                    }
-                                    status[subject] = True
-                                    balances = get_balances(access_key, secret_key)
-                                
-            time.sleep(5)
-        # except Exception as e:
-        #     print(e)
-        #     time.sleep(5)
+                                break
+                            buy_amount = int(buy_amount * 0.995)
+
+                        if result:
+                            avg_price, volume = wait_buy_filled(access_key, secret_key, result["uuid"])
+                            if avg_price:
+                                positions[subject] = {
+                                    "init_price": avg_price,
+                                    "max_price": avg_price,
+                                    "volume": volume,
+                                }
+                                status[subject] = True
+                                balances = get_balances(access_key, secret_key)
+                            
+        time.sleep(5)

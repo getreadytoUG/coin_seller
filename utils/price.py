@@ -1,4 +1,5 @@
 import json
+from time import time
 import requests
 
 def get_current_price(subject):
@@ -8,13 +9,19 @@ def get_current_price(subject):
 
     headers = {"accept": "application/json"}
 
-    response = requests.get(url, headers=headers, params=params)
+    correct_flag = False
+    for _ in range(3):
+        try:
+            response = requests.get(url, headers=headers, params=params)
+            current_price = json.loads(response.text)[0]["trade_price"]
+            
+            correct_flag = True
+            break
+        except:
+            time.sleep(1)
     
-    try:
-        current_price = json.loads(response.text)[0]["trade_price"]
-    except Exception as e:
-        print(f"ERROR: {e}")
-        print(f"RESPONSE: {response}")
+    if not correct_flag:
+        raise Exception(f"Failed to fetch current price for {subject} after 3 attempts.")
     
     return current_price
 
