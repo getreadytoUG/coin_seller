@@ -69,7 +69,7 @@ def place_market_sell(access_key, secret_key, market, volume):
         }
 
         jwt_token = jwt.encode(payload, secret_key, algorithm="HS256")
-        return jwt
+        return jwt_token, params
     
     correct_flag = False
     for _ in range(3):
