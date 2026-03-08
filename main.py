@@ -44,6 +44,7 @@ def get_balances(access_key, secret_key):
             time.sleep(1)
     
     if not correct_flag:
+        print(res.text)
         raise Exception("Failed to fetch balances after 3 attempts.")
             
     return res.json()

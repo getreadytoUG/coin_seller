@@ -51,6 +51,7 @@ def place_market_buy(access_key, secret_key, market, price):
             time.sleep(1)
 
     if not correct_flag:
+        print(response.text)
         raise Exception("Failed to place buy order after 3 attempts.")
 
     result = response.json()

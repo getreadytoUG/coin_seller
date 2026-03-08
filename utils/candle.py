@@ -55,6 +55,7 @@ def get_candles(unit, market):
             time.sleep(1)
             
     if not correct_flag:
+        print(response.text)
         raise Exception("Failed to fetch candles after 3 attempts.")
 
     candles = json.loads(response.text)
