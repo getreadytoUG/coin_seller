@@ -21,7 +21,7 @@ def get_current_price(subject):
             time.sleep(1)
     
     if not correct_flag:
-        print(response.text)
+        print(f"[RESPONSE] {response.text}")
         raise Exception(f"Failed to fetch current price for {subject} after 3 attempts.")
     
     return current_price

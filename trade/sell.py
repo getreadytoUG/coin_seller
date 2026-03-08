@@ -76,14 +76,14 @@ def place_market_sell(access_key, secret_key, market, volume):
     for _ in range(3):
         try:
             response = requests.post(UPBIT_ORDER_URL, headers=headers, json=params)
-            if response.status_code == 200:
+            if response.status_code in (200, 201):
                 correct_flag = True
                 break
         except:
             time.sleep(1)
 
     if not correct_flag:
-        print(response.text)
+        print(f"[RESPONSE] {response.text}")
         raise Exception("Failed to place sell order after 3 attempts.")
 
     result = response.json()

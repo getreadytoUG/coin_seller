@@ -48,14 +48,14 @@ def get_candles(unit, market):
     for _ in range(3):
         try:
             response = requests.get(url, headers=headers, params=params)
-            if response.status_code == 200:
+            if response.status_code in (200, 201):
                 correct_flag = True
                 break
         except:
             time.sleep(1)
             
     if not correct_flag:
-        print(response.text)
+        print(f"[RESPONSE] {response.text}")
         raise Exception("Failed to fetch candles after 3 attempts.")
 
     candles = json.loads(response.text)
