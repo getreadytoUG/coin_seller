@@ -12,36 +12,16 @@ def decide_sell(current_price, position):
     """
     position = {
         "init_price": float,
-        "max_price": float,
         "volume": float
     }
     """
 
     init_price = position["init_price"]
-    max_price = position["max_price"]
+    change = (current_price - init_price) / init_price * 100
 
-    # 최고가 갱신
-    if current_price > max_price:
-        position["max_price"] = current_price
-        return False  # 아직 안 판다
-
-    gain_from_entry = (max_price - init_price) / init_price * 100
-    drawdown_from_max = (current_price - max_price) / max_price * 100
-
-    # 1️⃣ +3% 미만 → -3% 손절
-    if gain_from_entry < 3:
-        if (current_price - init_price) / init_price * 100 <= -3:
-            return True
-
-    # 2️⃣ +3% 이상 +6% 미만 → 본전 청산
-    elif gain_from_entry < 6:
-        if current_price <= init_price:
-            return True
-
-    # 3️⃣ +6% 이상 → 최고가 대비 -6%
-    else:
-        if drawdown_from_max <= -6:
-            return True
+    # -3% 손절 또는 +5% 익절
+    if change <= -3 or change >= 5:
+        return True
 
     return False
 
