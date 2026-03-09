@@ -132,11 +132,12 @@ if __name__ == "__main__":
     secret_key = os.getenv("SECRET_KEY")
     subject_list = os.getenv("MARKET_LIST").split(", ")
     
-    while True:  
+    balances = get_balances(access_key, secret_key)
+    positions = init_positions_from_balances(balances, subject_list)
+
+    while True:
         status, balances = check_subjects(access_key, secret_key, subject_list)
 
-        positions = init_positions_from_balances(balances, subject_list)
-        
         for subject in subject_list:
             # 보유
             if status[subject]:
