@@ -116,8 +116,8 @@ def wait_buy_filled(access_key, secret_key, order_uuid, timeout=5):
         data = res.json()
 
         if data.get("state") == "done":
-            avg_price = float(data["price"])
-            volume = float(data["volume"])
+            avg_price = float(data["avg_price"])
+            volume = float(data["executed_volume"])
             return avg_price, volume
 
         time.sleep(0.3)
