@@ -1,5 +1,5 @@
 import json
-from time import time
+import time
 import requests
 
 def get_current_price(subject):
