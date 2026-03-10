@@ -125,6 +125,14 @@ def wait_buy_filled(access_key, secret_key, order_uuid, timeout=5):
     return None, None
 
 
+def have_enough_balance(balances):
+    for b in balances:
+        if b["currency"] == "KRW":
+            if float(b["balance"]) < 5000:
+                return False
+    return True
+
+
 if __name__ == "__main__":
     load_dotenv()
     
@@ -139,13 +147,7 @@ if __name__ == "__main__":
     while True:
         status, balances = check_subjects(access_key, secret_key, subject_list)
         
-        not_enough_balance = False
-        for bal in balances:
-            if bal["currency"] == "KRW":
-                if float(bal["balance"]) < 5000:
-                    print(f"Not enough KRW balance to buy {subject}. Available: {bal['balance']} KRW")
-                    not_enough_balance = True
-                    break
+        enough_balance = have_enough_balance(balances)
 
         for subject in subject_list:
             # 보유
@@ -174,10 +176,10 @@ if __name__ == "__main__":
                         print(f"[SELL DONE] {subject}")
                         status[subject] = False
                         positions.pop(subject, None)
-                        not_enough_balance = False
+                        enough_balance = True
                 
             else:
-                if not_enough_balance:
+                if not enough_balance:
                     continue
                 # 미보유 → 매수 판단
                 if decide_buy(subject):
@@ -215,4 +217,5 @@ if __name__ == "__main__":
                                 status[subject] = True
                                 balances = get_balances(access_key, secret_key)
                             
+                                enough_balance = have_enough_balance(balances)
         time.sleep(5)
