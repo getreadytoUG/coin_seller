@@ -19,8 +19,8 @@ def decide_sell(current_price, position):
     init_price = position["init_price"]
     change = (current_price - init_price) / init_price * 100
 
-    # -3% 손절 또는 +5% 익절
-    if change <= -3 or change >= 5:
+    # -1.5% 손절 또는 +5% 익절
+    if change <= -1.5 or change >= 5:
         return True
 
     return False
