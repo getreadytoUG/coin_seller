@@ -135,7 +135,6 @@ if __name__ == "__main__":
     balances = get_balances(access_key, secret_key)
     positions = init_positions_from_balances(balances, subject_list)
     
-    breakpoint()
 
     while True:
         status, balances = check_subjects(access_key, secret_key, subject_list)
