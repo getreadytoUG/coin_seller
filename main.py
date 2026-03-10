@@ -41,7 +41,7 @@ def get_balances(access_key, secret_key):
                 break
             break
         except:
-            time.sleep(1)
+            time.sleep(3)
     
     if not correct_flag:
         print(f"[RESPONSE] {res.text}")

@@ -64,7 +64,7 @@ def place_market_sell(access_key, secret_key, market, volume):
                 correct_flag = True
                 break
         except:
-            time.sleep(1)
+            time.sleep(3)
 
     if not correct_flag:
         print(f"[RESPONSE] {response.text}")

@@ -18,7 +18,7 @@ def get_current_price(subject):
             correct_flag = True
             break
         except:
-            time.sleep(1)
+            time.sleep(3)
     
     if not correct_flag:
         print(f"[RESPONSE] {response.text}")
