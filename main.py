@@ -134,9 +134,19 @@ if __name__ == "__main__":
     
     balances = get_balances(access_key, secret_key)
     positions = init_positions_from_balances(balances, subject_list)
+    
+    breakpoint()
 
     while True:
         status, balances = check_subjects(access_key, secret_key, subject_list)
+        
+        not_enough_balance = False
+        for bal in balances:
+            if bal["currency"] == "KRW":
+                if float(bal["balance"]) < 5000:
+                    print(f"Not enough KRW balance to buy {subject}. Available: {bal['balance']} KRW")
+                    not_enough_balance = True
+                    break
 
         for subject in subject_list:
             # 보유
@@ -165,8 +175,11 @@ if __name__ == "__main__":
                         print(f"[SELL DONE] {subject}")
                         status[subject] = False
                         positions.pop(subject, None)
+                        not_enough_balance = False
                 
             else:
+                if not_enough_balance:
+                    continue
                 # 미보유 → 매수 판단
                 if decide_buy(subject):
                 # if decide_buy_dummy(subject):
