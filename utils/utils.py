@@ -133,6 +133,7 @@ def have_enough_balance(balances):
 
 def decide_sell(current_price, init_price):
     # 매도 조건: 현재 가격이 초기 가격보다 5% 이상 상승한 경우
+    print(f"[INIT PRICE] {init_price} | [CURRENT PRICE] {current_price}")
     if (current_price >= init_price * 1.05) or (current_price <= init_price * 0.985):
         return True
     return False
