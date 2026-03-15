@@ -28,7 +28,8 @@ if __name__ == "__main__":
             new_buy_subject, avg_price, volume = buy_subject(not_have_subjects, access_key, secret_key)
             if new_buy_subject:
                 already_have_subjects.append(new_buy_subject)
-                
+                not_have_subjects.remove(new_buy_subject)
+
                 positions[new_buy_subject] = {
                     "init_price": avg_price,
                     "max_price": avg_price,
@@ -39,12 +40,14 @@ if __name__ == "__main__":
             new_sell_subject = sell_subject(positions, access_key, secret_key)
             if new_sell_subject:
                 already_have_subjects.remove(new_sell_subject)
+                not_have_subjects.append(new_sell_subject)
                 positions.pop(new_sell_subject, None)
         else:
             # 매도 로직
             new_sell_subject = sell_subject(positions, access_key, secret_key)
             if new_sell_subject:
                 already_have_subjects.remove(new_sell_subject)
+                not_have_subjects.append(new_sell_subject)
                 positions.pop(new_sell_subject, None)
 
         time.sleep(5)

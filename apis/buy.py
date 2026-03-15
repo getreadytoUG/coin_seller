@@ -48,7 +48,7 @@ def buy_subject(not_have_subjects, access_key, secret_key):
         if is_subject_buy_signal:
             print(f"[BUY CHECKING SUCCESS] {subject} buy signal")
             # 매수 로직
-            available_volume = 5000 * 1.05
+            available_volume = 10000
             
             buy_result = place_market_buy(access_key, secret_key, subject, available_volume)
             
