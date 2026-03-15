@@ -23,7 +23,14 @@ if __name__ == "__main__":
         status = check_subjects(subject_list, balances)
         
         enough_balance = have_enough_balance(balances)
-        if enough_balance:
+        if not enough_balance:
+            # 매도 로직
+            new_sell_subject = sell_subject(positions, access_key, secret_key)
+            if new_sell_subject:
+                already_have_subjects.remove(new_sell_subject)
+                not_have_subjects.append(new_sell_subject)
+                positions.pop(new_sell_subject, None)
+        else:
             # 매수 로직
             new_buy_subject, avg_price, volume = buy_subject(not_have_subjects, access_key, secret_key)
             if new_buy_subject:
@@ -36,13 +43,6 @@ if __name__ == "__main__":
                     "volume": volume,
                 }
             
-            # 매도 로직
-            new_sell_subject = sell_subject(positions, access_key, secret_key)
-            if new_sell_subject:
-                already_have_subjects.remove(new_sell_subject)
-                not_have_subjects.append(new_sell_subject)
-                positions.pop(new_sell_subject, None)
-        else:
             # 매도 로직
             new_sell_subject = sell_subject(positions, access_key, secret_key)
             if new_sell_subject:
